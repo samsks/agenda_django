@@ -17,4 +17,5 @@ class Event(models.Model):
     def __str__(self):
         return self.title
 
-
+    def get_create_date(self):
+        return self.event_date.strftime('%d/%m/%Y %H:%Mhrs')
