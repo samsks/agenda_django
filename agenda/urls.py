@@ -23,5 +23,8 @@ urlpatterns = [
     path('agenda/', views.events_list),
     # forma de criar uma index para a rota base
     # path('', views.index)
-    path('', RedirectView.as_view(url='/agenda/'))
+    path('', RedirectView.as_view(url='/agenda/')),
+    path('login/', views.login_user),
+    path('login/submit', views.submit_login),
+    path('logout/', views.logout_user)
 ]
