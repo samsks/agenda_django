@@ -6,7 +6,7 @@ from core_app.models import Event
 
 
 class EventAdmin(admin.ModelAdmin):
-    list_display = ('title', 'event_date', 'create_date')
+    list_display = ('id', 'title', 'event_date', 'create_date')
     list_filter = ('user', 'event_date')
 
 

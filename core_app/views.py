@@ -56,18 +56,39 @@ def events_list(req):
     # return redirect('/agenda/')
 
 @login_required(login_url='/login/')
-def events(req):
-    return render(req, 'evento.html')
+def event(req):
+    evnt_id = req.GET.get('id')
+    data = dict()
+    if evnt_id:
+        data['event'] = Event.objects.get(id=evnt_id)
+    return render(req, 'evento.html', data)
 
 
 @login_required(login_url='/login/')
-def submit_events(req):
+def submit_event(req):
     if req.POST:
         title = req.POST.get('title')
         event_date = req.POST.get('event_date')
         description = req.POST.get('description')
         user = req.user
-        Event.objects.create(title=title, event_date=event_date, description=description, user=user)
+        event_id = req.POST.get('event_id')
+        if event_id:
+            evnt = Event.objects.get(id=event_id)
+            if evnt.user == user:
+                evnt.title = title
+                evnt.description = description
+                evnt.event_date = event_date
+                evnt.save()
+            # Event.objects.filter(id=event_id).update(title=title, event_date=event_date, description=description)
+        else:
+            Event.objects.create(title=title, event_date=event_date, description=description, user=user)
     return redirect('/agenda/')
 
 
+@login_required(login_url='/login/')
+def delete_event(req, event_id):
+    user = req.user
+    evnt = Event.objects.get(id=event_id)
+    if user == evnt.user:
+        evnt.delete()
+    return redirect('/agenda/')
