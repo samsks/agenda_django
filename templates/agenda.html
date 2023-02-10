@@ -2,6 +2,7 @@
 
 {% block content %}
     <h2>Agendamentos</h2>
+    <a href="evento/" style="">Novo Evento</a>
     <ul style="font-size: 18px">
     {% for event in events %}
         <li>{{ event.title }} - {{ event.get_create_date }}</li>

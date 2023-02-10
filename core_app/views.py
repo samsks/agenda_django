@@ -46,11 +46,28 @@ def events_list(req):
 
     # Apenas do usuário logado sem resolver o erro de crash se deslogado
     user = req.user
-    events = Event.objects.filter(user=user)
-    data = {'events': events}
+    evnt = Event.objects.filter(user=user)
+    data = {'events': evnt}
     return render(req, 'agenda.html', data)
 
 
 # forma de criar um index usando o redirect em uma rota vazia
 # def index(req):
     # return redirect('/agenda/')
+
+@login_required(login_url='/login/')
+def events(req):
+    return render(req, 'evento.html')
+
+
+@login_required(login_url='/login/')
+def submit_events(req):
+    if req.POST:
+        title = req.POST.get('title')
+        event_date = req.POST.get('event_date')
+        description = req.POST.get('description')
+        user = req.user
+        Event.objects.create(title=title, event_date=event_date, description=description, user=user)
+    return redirect('/agenda/')
+
+

@@ -21,6 +21,8 @@ from django.views.generic import RedirectView
 urlpatterns = [
     path("admin/", admin.site.urls),
     path('agenda/', views.events_list),
+    path('agenda/evento/', views.events),
+    path('agenda/evento/submit', views.submit_events),
     # forma de criar uma index para a rota base
     # path('', views.index)
     path('', RedirectView.as_view(url='/agenda/')),
