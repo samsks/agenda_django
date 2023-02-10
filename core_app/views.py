@@ -1,10 +1,13 @@
 from typing import Set, Any
 
+from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
 from core_app.models import Event
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
+from datetime import datetime as dt, timedelta
+from django.http.response import Http404, JsonResponse
 
 
 # Create your views here.
@@ -46,7 +49,8 @@ def events_list(req):
 
     # Apenas do usuário logado sem resolver o erro de crash se deslogado
     user = req.user
-    evnt = Event.objects.filter(user=user)
+    time_now = dt.now() - timedelta(hours=1)
+    evnt = Event.objects.filter(user=user, event_date__gt=time_now)
     data = {'events': evnt}
     return render(req, 'agenda.html', data)
 
@@ -88,7 +92,18 @@ def submit_event(req):
 @login_required(login_url='/login/')
 def delete_event(req, event_id):
     user = req.user
-    evnt = Event.objects.get(id=event_id)
+    try:
+        evnt = Event.objects.get(id=event_id)
+    except Exception:
+        raise Http404()
     if user == evnt.user:
         evnt.delete()
+    else:
+        raise Http404()
     return redirect('/agenda/')
+
+
+def json_event_list(req, user_id):
+    user = User.objects.get(id=user_id)
+    evnt = Event.objects.filter(user=user).values('id', 'title', 'description', 'event_date')
+    return JsonResponse(list(evnt), safe=False)
